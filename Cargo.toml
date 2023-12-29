@@ -1,2 +1,11 @@
+[package]
+name = "master_mind"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "master_mind"
+path = "application/src/main.rs"
+
 [workspace]
 members = ["application", "engine", "testbed"]

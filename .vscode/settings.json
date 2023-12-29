@@ -1,7 +1,3 @@
 {
-    "rust-analyzer.linkedProjects": [
-        ".\\application\\Cargo.toml",
-        ".\\engine\\Cargo.toml",
-        ".\\engine\\Cargo.toml"
-    ]
+    "editor.inlayHints.enabled": "offUnlessPressed"
 }
