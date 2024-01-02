@@ -1,9 +1,12 @@
+use super::PlatformState;
+#[cfg(target_os = "windows")]
 use winapi::{
     shared::windowsx::{GET_X_LPARAM, GET_Y_LPARAM},
     um::winuser::{
         GET_WHEEL_DELTA_WPARAM, WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_RBUTTONUP,
     },
 };
+#[cfg(target_os = "windows")]
 use windows::Win32::{
     Foundation::{LRESULT, RECT},
     UI::WindowsAndMessaging::{
@@ -13,15 +16,13 @@ use windows::Win32::{
     },
 };
 
-use super::ApplicationState;
-
 #[cfg(target_os = "windows")]
 pub struct InternalState {
     h_instance: windows::Win32::Foundation::HINSTANCE,
     hwnd: windows::Win32::Foundation::HWND,
 }
 
-impl ApplicationState {
+impl PlatformState {
     #[cfg(target_os = "windows")]
     pub fn new(
         x: i16,
@@ -115,7 +116,7 @@ impl ApplicationState {
         unsafe { ShowWindow(handle, show_window_command_flags) };
 
         return ApplicationState {
-            internal_state: InternalState {
+            internal_state: PlatformState {
                 h_instance: module_handle.into(),
                 hwnd: handle,
             },
@@ -143,6 +144,7 @@ impl ApplicationState {
     }
 }
 
+#[cfg(target_os = "windows")]
 unsafe extern "system" fn windowproc(
     handle: windows::Win32::Foundation::HWND,
     msg: u32,
