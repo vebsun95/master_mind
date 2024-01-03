@@ -1,4 +1,4 @@
-use engine::{application::{ApplicationConfig, ApplicationState}, game::Game};
+use engine::{application::{ApplicationConfig, ApplicationState}, game::Game, log_info};
 
 fn main() {
     let application_config = ApplicationConfig {
@@ -16,18 +16,18 @@ fn main() {
 }
 
 pub fn initalize(game: &Game) -> bool {
-    println!("Game initalize was called.");
+    log_info!("Initalize was called!");
     return true;
 }
 pub fn update(game: &Game, delta_time: f32) -> bool {
-    println!("Game update was called.");
+    log_info!("Game update was called.");
     return true;
 }
 pub fn render(game: &Game, delta_time: f32) -> bool {
-    println!("Game render was called.");
+    log_info!("Game render was called.");
     return  true;
 }
 pub fn on_resize(game: &Game, width: u16, height: u16) -> bool {
-    println!("Game on resize was called.");
+    log_info!("Game on resize was called.");
     return true;
 }
