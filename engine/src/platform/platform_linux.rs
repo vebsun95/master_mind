@@ -1,3 +1,5 @@
+use super::PlatformState;
+
 #[cfg(target_os = "linux")]
 pub struct PlatformState {
     connection: xcb::Connection,

@@ -10,14 +10,14 @@ use winapi::{
 use windows::Win32::{
     Foundation::{LRESULT, RECT},
     UI::WindowsAndMessaging::{
-        DefWindowProcW, GetClientRect, WM_DESTROY, WM_ERASEBKGND, WM_KEYDOWN, WM_KEYUP,
+        DefWindowProcW, GetClientRect, WM_CLOSE, WM_DESTROY, WM_ERASEBKGND, WM_KEYDOWN, WM_KEYUP,
         WM_LBUTTONUP, WM_MBUTTONUP, WM_MOUSEHWHEEL, WM_MOUSEMOVE, WM_SIZE, WM_SYSKEYDOWN,
-        WM_SYSKEYUP, WM_CLOSE,
+        WM_SYSKEYUP,
     },
 };
 
 #[cfg(target_os = "windows")]
-pub struct InternalState {
+pub struct PlateformState {
     h_instance: windows::Win32::Foundation::HINSTANCE,
     hwnd: windows::Win32::Foundation::HWND,
 }
@@ -29,8 +29,8 @@ impl PlatformState {
         y: i16,
         width: u16,
         height: u16,
-        application_name: &String,
-    ) -> ApplicationState {
+        application_name: &str,
+    ) -> PlatformState {
         use windows::{
             core::*,
             Win32::Foundation::*,
@@ -115,15 +115,13 @@ impl PlatformState {
 
         unsafe { ShowWindow(handle, show_window_command_flags) };
 
-        return ApplicationState {
-            internal_state: PlatformState {
-                h_instance: module_handle.into(),
-                hwnd: handle,
-            },
+        return PlatformState {
+            h_instance: module_handle.into(),
+            hwnd: handle,
         };
     }
     #[cfg(target_os = "windows")]
-    pub fn pump_messages(self: &ApplicationState) -> bool {
+    pub fn pump_messages(self: &PlateformState) -> bool {
         use windows::Win32::{
             Foundation::HWND,
             UI::WindowsAndMessaging::{
@@ -206,9 +204,8 @@ unsafe extern "system" fn windowproc(
     };
 
     if match_result.is_some() {
-        return  match_result.unwrap();
-    }
-    else {
+        return match_result.unwrap();
+    } else {
         return DefWindowProcW(handle, msg, wparam, lparam);
     }
 }
