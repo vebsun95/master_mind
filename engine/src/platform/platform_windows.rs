@@ -1,4 +1,6 @@
 use super::PlatformState;
+use crate::application::ApplicationConfig;
+
 #[cfg(target_os = "windows")]
 use winapi::{
     shared::windowsx::{GET_X_LPARAM, GET_Y_LPARAM},
@@ -24,13 +26,7 @@ pub struct PlateformState {
 
 impl PlatformState {
     #[cfg(target_os = "windows")]
-    pub fn new(
-        x: i16,
-        y: i16,
-        width: u16,
-        height: u16,
-        application_name: &str,
-    ) -> PlatformState {
+    pub fn new(application_config: &ApplicationConfig) -> PlatformState {
         use windows::{
             core::*,
             Win32::Foundation::*,
@@ -59,10 +55,10 @@ impl PlatformState {
             panic!("Failed to register windows class.");
         }
 
-        let client_x: i32 = i32::from(x);
-        let client_y: i32 = i32::from(y);
-        let client_width: i32 = i32::from(width);
-        let client_height: i32 = i32::from(height);
+        let client_x: i32 = i32::from(application_config.x);
+        let client_y: i32 = i32::from(application_config.y);
+        let client_width: i32 = i32::from(application_config.width);
+        let client_height: i32 = i32::from(application_config.height);
 
         let mut window_x: i32 = client_x;
         let mut window_y: i32 = client_y;
@@ -94,6 +90,8 @@ impl PlatformState {
         window_width += border_rect.right - border_rect.left;
         window_height += border_rect.bottom - border_rect.top;
 
+        let application_name = application_config.application_name;
+
         let handle = unsafe {
             CreateWindowExA(
                 window_ex_style,
@@ -120,26 +118,27 @@ impl PlatformState {
             hwnd: handle,
         };
     }
-    #[cfg(target_os = "windows")]
-    pub fn pump_messages(self: &PlateformState) -> bool {
-        use windows::Win32::{
-            Foundation::HWND,
-            UI::WindowsAndMessaging::{
-                DispatchMessageA, PeekMessageA, PeekMessageW, TranslateMessage, MSG, PM_REMOVE,
-            },
-        };
+}
 
-        let mut message = MSG::default();
+#[cfg(target_os = "windows")]
+pub(crate) fn pump_messages() -> bool {
+    use windows::Win32::{
+        Foundation::HWND,
+        UI::WindowsAndMessaging::{
+            DispatchMessageA, PeekMessageA, TranslateMessage, MSG, PM_REMOVE,
+        },
+    };
 
-        unsafe {
-            while PeekMessageA(&mut message, HWND::default(), 0, 0, PM_REMOVE).into() {
-                TranslateMessage(&mut message);
-                DispatchMessageA(&mut message);
-            }
+    let mut message = MSG::default();
+
+    unsafe {
+        while PeekMessageA(&mut message, HWND::default(), 0, 0, PM_REMOVE).into() {
+            TranslateMessage(&mut message);
+            DispatchMessageA(&mut message);
         }
-
-        return true;
     }
+
+    true
 }
 
 #[cfg(target_os = "windows")]

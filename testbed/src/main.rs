@@ -9,7 +9,7 @@ fn main() {
         height: 800,
     };
 
-    let mut application = ApplicationState::create(application_config, initalize, update, render, on_resize);
+    let mut application = ApplicationState::new(application_config, initalize, update, render, on_resize);
 
     application.run();
 
